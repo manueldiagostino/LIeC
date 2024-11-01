@@ -26,16 +26,17 @@ target_link_libraries(${CPM_LEXER_BIN} -lfl)
 file(GLOB CPM_FILES ${CMAKE_SOURCE_DIR}/test/*.cpm)  # Trova tutti i file .cpm
 
 add_custom_target(test
-    COMMAND ${CMAKE_COMMAND} -E echo "Esecuzione dei test con i file .cpm nella cartella test"
-    COMMAND ${CMAKE_COMMAND} -E echo "Inizio test..."
+				COMMAND make clean && ${CMAKE_COMMAND} .. && make
+				COMMAND ${CMAKE_COMMAND} -E echo "Esecuzione dei test con i file .cpm nella cartella test"
+				COMMAND ${CMAKE_COMMAND} -E echo "Inizio test..."
 )
 
 foreach(CPM_FILE ${CPM_FILES})
-    add_custom_command(
-        TARGET test
-        COMMAND ${CMAKE_BINARY_DIR}/${CPM_LEXER_BIN} < "${CPM_FILE}"
+	add_custom_command(
+								TARGET test
+								COMMAND ${CMAKE_BINARY_DIR}/${CPM_LEXER_BIN} < "${CPM_FILE}"
 				COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --green "Test completato per ${CPM_FILE}"
-        DEPENDS ${CPM_LEXER_BIN}
-        COMMENT "Esecuzione del test per ${CPM_FILE}"
-    )
+								DEPENDS ${CPM_LEXER_BIN}
+								COMMENT "Esecuzione del test per ${CPM_FILE}"
+				)
 endforeach()

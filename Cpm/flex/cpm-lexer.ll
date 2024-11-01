@@ -13,7 +13,7 @@ enum P_LANGUAGE {
 	FLOAT,
 	DOUBLE,
 	CHAR,
-	STRING,
+	CONST_STRING,
 	PUNCTUATOR,
 	COMMENT,
 
@@ -55,8 +55,24 @@ NONDIGIT [_a-zA-Z]
 	/* String literals */
 STRING_LITERAL ("\""{S_CHAR_SEQUENCE}?"\"")|("L\""{S_CHAR_SEQUENCE}?"\"")
 S_CHAR_SEQUENCE {S_CHAR}+
-S_CHAR [^\"\\\n]
+S_CHAR ([^\"\\\n])|({ESCAPE_SEQUENCE})
+ESCAPE_SEQUENCE (\\[0btnfr\"'\\])
 
+	/* Punctuators */
+DELIMITER        [{}()[\],;]
+
+INCREMENT        "++"
+DECREMENT        "--"
+
+ARITHMETIC_OP    [*/%+-]
+LOGICAL_OP      "!"|"&&"|"||"
+
+RELATIONAL_OP    "<="|">="|"=="|"!="|"<"|">"
+
+ASSIGNMENT_OP    "="|"*="|"/="|"+="|"-="|"^="
+HASH_OP          "#"|"##"
+
+PUNCTUATOR       {DELIMITER}|{INCREMENT}|{DECREMENT}|{ARITHMETIC_OP}|{LOGICAL_OP}|{RELATIONAL_OP}|{ASSIGNMENT_OP}|{HASH_OP}
 
 
 %x COMMENT_MODE
@@ -91,7 +107,9 @@ while {return KEY_W;}
 {FLOATING_CONSTANT} {return CONST_FLOAT;}
 
 	/* String literals */
-{STRING_LITERAL}
+{STRING_LITERAL} {return CONST_STRING;}
+
+{PUNCTUATOR} {return PUNCTUATOR;}
 
 	/* Whitespaces */
 
